@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.dagger.hilt.android)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     kapt(libs.dagger.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.room.ktx)
