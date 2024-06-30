@@ -95,4 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.accompanist.coil)
+
+    kapt("androidx.room:room-compiler:2.6.1")
 }

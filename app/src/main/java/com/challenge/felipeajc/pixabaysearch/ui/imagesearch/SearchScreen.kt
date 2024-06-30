@@ -177,7 +177,7 @@ private fun SearchScreenContent(
 
                     is Empty -> EmptyListMessageView()
                     is Error -> ErrorView(searchState.throwable)
-                    Loading -> TODO()
+                    Loading ->  EmptyListMessageView()
                 }
             }
         }
@@ -267,7 +267,7 @@ fun PlaceHolderView(
             )
             Text(
                 text = message,
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center,
                 color = textColor.copy(alpha = 0.5f)
             )
@@ -354,7 +354,7 @@ fun IconTextUI(icon: ImageVector, text: String) {
         )
         Text(
             text = text,
-            style = MaterialTheme.typography.displayMedium.copy(color = Color.White),
+            style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
         )
     }
 }
