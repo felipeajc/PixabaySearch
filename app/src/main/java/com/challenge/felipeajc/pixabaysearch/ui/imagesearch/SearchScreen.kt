@@ -3,17 +3,42 @@ package com.challenge.felipeajc.pixabaysearch.ui.imagesearch
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,16 +51,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.challenge.felipeajc.pixabaysearch.R
 import com.challenge.felipeajc.pixabaysearch.data.entities.PixabayImageModel
 import com.challenge.felipeajc.pixabaysearch.domain.SearchState
-import com.challenge.felipeajc.pixabaysearch.domain.SearchState.*
+import com.challenge.felipeajc.pixabaysearch.domain.SearchState.Empty
+import com.challenge.felipeajc.pixabaysearch.domain.SearchState.Error
+import com.challenge.felipeajc.pixabaysearch.domain.SearchState.Loading
+import com.challenge.felipeajc.pixabaysearch.domain.SearchState.Success
 import com.challenge.felipeajc.pixabaysearch.ui.common.ImageUI
 import com.challenge.felipeajc.pixabaysearch.ui.common.isPortrait
 import com.challenge.felipeajc.pixabaysearch.ui.common.toUiModel
-
+import com.google.accompanist.coil.rememberCoilPainter
 
 @Preview
 @Composable
@@ -64,27 +92,54 @@ fun OpenImageDetailsConfirmationDialog(
     onDismiss: () -> Unit,
 ) {
     if (showDialog) {
-        AlertDialog(
-            modifier = Modifier.fillMaxWidth(),
-            title = { Text(stringResource(R.string.do_you_want_to_open_image_details)) },
+        Dialog(
             onDismissRequest = onDismiss,
-            buttons = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.End,
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false,
+            )
+        ) {
+            Surface(
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.do_you_want_to_open_image_details),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(R.string.no))
-                    }
-                    TextButton(onClick = onConfirm) {
-                        Text(text = stringResource(R.string.yes))
+                        TextButton(
+                            onClick = onDismiss,
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.no))
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextButton(
+                            onClick = onConfirm,
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.yes))
+                        }
                     }
                 }
             }
-        )
+        }
     }
 }
 
@@ -114,13 +169,15 @@ private fun SearchScreenContent(
                 )
             }
             Row {
-                when (searchState) {
+                when(searchState) {
                     is Success -> ImageListView(searchState.pixabayImages) {
                         imageId = it
                         showDialog = true
                     }
+
                     is Empty -> EmptyListMessageView()
                     is Error -> ErrorView(searchState.throwable)
+                    Loading -> TODO()
                 }
             }
         }
@@ -142,24 +199,16 @@ fun SearchTopbar(
     onSearchClicked: () -> Unit = {},
     isLoading: Boolean,
 ) {
-    TextField(
+    OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 8.dp),
         value = searchText,
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MaterialTheme.colors.surface,
-            cursorColor = MaterialTheme.colors.onSurface,
-            disabledLabelColor = MaterialTheme.colors.surface,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
         onValueChange = {
             onSearchChange(it)
         },
-        shape = RoundedCornerShape(8.dp),
-        singleLine = true,
-        trailingIcon = { LoadingCOntentImage(isLoading, onSearchClicked) },
+        label = { Text("Search") },
+        trailingIcon = { LoadingContentImage(isLoading, onSearchClicked) },
         keyboardActions = KeyboardActions(onDone = { onSearchClicked() })
     )
 }
@@ -172,15 +221,23 @@ private fun ImageListView(
 ) {
     val currentConfig = LocalConfiguration.current
     LazyVerticalGrid(
-        modifier = Modifier,
-        cells = GridCells.Fixed(if (currentConfig.isPortrait()) 2 else 5),
+        columns = GridCells.Fixed(if (currentConfig.isPortrait()) 2 else 5),
         content = {
             itemsIndexed(pixabayImages) { _, item ->
-                ImageItemUI(
-                    modifier = Modifier.padding(8.dp),
-                    pixabayImage = item,
-                    onImageClicked = { onImageClicked(it) }
-                )
+                Surface(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .aspectRatio(1f)
+                        .clickable { onImageClicked(item.imageId) },
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.White
+                ) {
+                    ImageItemUI(
+                        modifier = Modifier.padding(8.dp),
+                        pixabayImage = item,
+                        onImageClicked = { onImageClicked(it) }
+                    )
+                }
             }
         }
     )
@@ -191,7 +248,7 @@ fun PlaceHolderView(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     message: String,
-    iconTint: Color = MaterialTheme.colors.secondaryVariant,
+    iconTint: Color = MaterialTheme.colorScheme.surfaceVariant,
     textColor: Color = Color.Unspecified,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -210,7 +267,7 @@ fun PlaceHolderView(
             )
             Text(
                 text = message,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.displayMedium,
                 textAlign = TextAlign.Center,
                 color = textColor.copy(alpha = 0.5f)
             )
@@ -222,8 +279,8 @@ fun PlaceHolderView(
 private fun EmptyListMessageView() {
     PlaceHolderView(
         modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
-        icon = Icons.Outlined.Error,
-        stringResource(R.string.empty_view_message)
+        icon = Icons.Outlined.Close,
+        message = stringResource(R.string.empty_view_message)
     )
 }
 
@@ -235,12 +292,12 @@ fun ErrorView(
     PlaceHolderView(
         icon = uiModel.errorIconId,
         message = stringResource(id = uiModel.errorMessageId),
-        iconTint = MaterialTheme.colors.error
+        iconTint = MaterialTheme.colorScheme.error
     )
 }
 
 @Composable
-private fun LoadingCOntentImage(isLoading: Boolean, onSearchClicked: () -> Unit) {
+private fun LoadingContentImage(isLoading: Boolean, onSearchClicked: () -> Unit) {
     if (isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.size(24.dp),
@@ -250,14 +307,13 @@ private fun LoadingCOntentImage(isLoading: Boolean, onSearchClicked: () -> Unit)
         IconButton(onClick = { onSearchClicked() }) {
             Icon(
                 imageVector = Icons.Outlined.Search,
-                tint = MaterialTheme.colors.onSurface,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = ""
             )
         }
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ImageItemUI(
     modifier: Modifier = Modifier,
@@ -275,7 +331,7 @@ fun ImageItemUI(
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = rememberImagePainter(pixabayImage.url),
+            painter = rememberCoilPainter(pixabayImage.url),
             contentDescription = "",
             contentScale = ContentScale.Crop
         )
@@ -298,7 +354,7 @@ fun IconTextUI(icon: ImageVector, text: String) {
         )
         Text(
             text = text,
-            style = MaterialTheme.typography.caption.copy(color = Color.White),
+            style = MaterialTheme.typography.displayMedium.copy(color = Color.White),
         )
     }
 }

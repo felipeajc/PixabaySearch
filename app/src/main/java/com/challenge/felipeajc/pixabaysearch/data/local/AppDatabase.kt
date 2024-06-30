@@ -1,7 +1,12 @@
 package com.challenge.felipeajc.pixabaysearch.data.local
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.challenge.felipeajc.pixabaysearch.data.entities.PixabayImage
 
 @Database(entities = [PixabayImage::class], version = 1)

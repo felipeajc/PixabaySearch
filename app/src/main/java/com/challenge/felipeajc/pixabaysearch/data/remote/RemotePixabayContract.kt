@@ -1,5 +1,6 @@
 package com.challenge.felipeajc.pixabaysearch.data.remote
 
+import com.challenge.felipeajc.pixabaysearch.BuildConfig
 import com.challenge.felipeajc.pixabaysearch.data.entities.PixabayImagesSearchResponse
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -21,7 +22,7 @@ interface RemotePixabayContract {
 }
 
 fun pixabayApi(
-    baseUrl: HttpUrl = com.challenge.felipeajc.pixabaysearch.BuildConfig.BASE_URL.toHttpUrl(),
+    baseUrl: HttpUrl = BuildConfig.BASE_URL.toHttpUrl(),
     client: () -> OkHttpClient = { createOkHttpClient() },
 ): RemotePixabayContract {
     val retrofit = Retrofit.Builder()

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Pixabay Search</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="do_you_want_to_open_image_details">Do you want to open image details?</string>
+    <string name="empty_view_message">No result found</string>
+    <string name="error_message">Something went wrong</string>
+    <string name="no_internet_connection">No Internet connection</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="search_images">Search Images</string>
+    <string name="tag_prefix">#</string>
+    <string name="search">search</string>
+    <string name="details">details</string>
+</resources>

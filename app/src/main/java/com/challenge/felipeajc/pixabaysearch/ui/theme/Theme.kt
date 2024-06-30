@@ -1,23 +1,23 @@
 package com.challenge.felipeajc.pixabaysearch.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
+private val DarkColorPalette = darkColorScheme(
     primary = Purple200,
-    primaryVariant = Purple700,
+    primaryContainer = Purple700,
     secondary = Teal200,
     background = DarkBlack,
     surface = Purple700,
 )
 
-private val LightColorPalette = lightColors(
+private val LightColorPalette = lightColorScheme(
     primary = Purple500,
-    primaryVariant = Purple700,
+    primaryContainer = Purple700,
     secondary = Teal200,
     surface = LightBlue,
     onPrimary = Color.White,
@@ -27,7 +27,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun pixabaysearchTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun PixabaysearchTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
@@ -35,7 +35,7 @@ fun pixabaysearchTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Com
     }
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colors,
         typography = Typography,
         shapes = Shapes,
         content = content
