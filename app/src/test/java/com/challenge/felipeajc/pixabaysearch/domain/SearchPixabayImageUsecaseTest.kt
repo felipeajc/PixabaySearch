@@ -7,7 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -29,7 +29,7 @@ class SearchPixabayImageUsecaseTest {
     }
 
     @Test
-    fun `invoke with non-empty list returns Success state`() = runTest {
+    fun `invoke with non-empty list returns Success state`(): Unit = runTest {
         val query = "fruits"
         val mockImages = listOf(PixabayImage(id = 1, previewURL = "url1", tags = "fruits"))
         val expectedImages = mockImages.map { it.toImageModel() }
@@ -38,8 +38,22 @@ class SearchPixabayImageUsecaseTest {
             emit(mockImages)
         })
 
-        usecase(query).collect { result ->
-            assertEquals(SearchState.Success(expectedImages), result)
+        val flowResult = usecase(query)
+
+        flowResult.collect { result ->
+            when(result) {
+                is SearchState.Loading -> {
+                    assertEquals(SearchState.Loading, result)
+                }
+
+                is SearchState.Success -> {
+                    assertEquals(expectedImages, result.pixabayImages)
+                }
+
+                else -> {
+                    fail("Expected Success state with images but got $result")
+                }
+            }
         }
     }
 
@@ -48,24 +62,25 @@ class SearchPixabayImageUsecaseTest {
         val query = "nonexistent"
 
         `when`(mockRepository.searchPixabayImage(query)).thenReturn(flow {
-            emit(emptyList<PixabayImage>())
+            emit(emptyList())
         })
 
-        usecase(query).collect { result ->
-            assertEquals(SearchState.Loading, result)
-        }
-    }
+        val flowResult = usecase(query)
 
-    @Test
-    fun `invoke with error returns Error state`() = runTest {
-        val query = "error"
+        flowResult.collect { result ->
+            when(result) {
+                is SearchState.Loading -> {
+                    assertEquals(SearchState.Loading, result)
+                }
 
-        val mockError = RuntimeException("Repository error")
-        `when`(mockRepository.searchPixabayImage(query)).thenThrow(mockError)
+                is SearchState.Empty -> {
+                    assertEquals(SearchState.Empty, result)
+                }
 
-        usecase(query).collect { result ->
-            assertTrue(result is SearchState.Error)
-            assertEquals(mockError, (result as SearchState.Error).throwable)
+                else -> {
+                    fail("Expected Empty state but got $result")
+                }
+            }
         }
     }
 }

@@ -64,5 +64,3 @@ private fun loggingInterceptor(): Interceptor =
 enum class ImageType(val key: String) {
     PHOTO("photo")
 }
-
-
