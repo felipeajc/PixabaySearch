@@ -99,4 +99,10 @@ dependencies {
     implementation(libs.accompanist.coil)
 
     kapt("androidx.room:room-compiler:2.6.1")
+
+    testImplementation(libs.mockito.core)
+
+    // Dependências para testes de coroutines
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
 }
