@@ -5,23 +5,24 @@ import com.challenge.felipeajc.pixabaysearch.data.entities.PixabayImageModel
 import com.challenge.felipeajc.pixabaysearch.domain.SearchPixabayImageUsecase
 import com.challenge.felipeajc.pixabaysearch.domain.SearchState
 import com.challenge.felipeajc.pixabaysearch.ui.imagesearch.SearchImagesViewModel
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 
 @ExperimentalCoroutinesApi
 class SearchImagesViewModelTest {
@@ -29,9 +30,7 @@ class SearchImagesViewModelTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    @Mock
     private lateinit var mockUsecase: SearchPixabayImageUsecase
-
     private lateinit var viewModel: SearchImagesViewModel
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -39,13 +38,12 @@ class SearchImagesViewModelTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        viewModel = SearchImagesViewModel(mockUsecase)
-    }
-
-    @Before
-    fun setUpCoroutineScope() {
         Dispatchers.setMain(mainThreadSurrogate)
+
+        mockUsecase = mockk()
+        coEvery { mockUsecase.invoke(any()) } returns flowOf(SearchState.Empty)
+
+        viewModel = SearchImagesViewModel(mockUsecase)
     }
 
     @After
@@ -60,24 +58,36 @@ class SearchImagesViewModelTest {
     }
 
     @Test
-    fun searchImagesUpdatesStateToSuccess() = runBlocking {
+    fun searchImagesUpdatesStateToSuccess() = runTest {
         val query = "fruits"
-        val images = listOf(mock(PixabayImageModel::class.java))
+        val images = listOf(mockk<PixabayImageModel>())
 
-        `when`(mockUsecase(query)).thenReturn(flowOf(SearchState.Success(images)))
+        coEvery { mockUsecase.invoke(query) } returns flowOf(SearchState.Success(images))
 
         viewModel.searchImages(query)
 
-        assertEquals(SearchState.Success(images), viewModel.searchViewState.value)
+        delay(100)
+
+        val actualState = viewModel.searchViewState.value
+        val expectedState = SearchState.Success(images)
+
+        if (actualState is SearchState.Success) {
+            assertEquals(expectedState.pixabayImages, actualState.pixabayImages)
+        } else {
+            Assert.fail("Expected state is not Success")
+        }
     }
 
     @Test
     fun searchImagesUpdatesStateToEmpty() = runBlocking {
         val query = "noresult"
 
-        `when`(mockUsecase(query)).thenReturn(flowOf(SearchState.Empty))
+        coEvery { mockUsecase.invoke(query) } returns flowOf(SearchState.Empty)
 
         viewModel.searchImages(query)
+
+        // Waiting a bit for the state to be updated
+        delay(100)
 
         assertEquals(SearchState.Empty, viewModel.searchViewState.value)
     }
