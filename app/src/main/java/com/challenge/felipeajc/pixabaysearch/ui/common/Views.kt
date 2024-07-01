@@ -28,8 +28,8 @@ import com.challenge.felipeajc.pixabaysearch.ui.imagesearch.IconTextUI
 @Composable
 fun ImageUI(
     modifier: Modifier = Modifier,
-    pixabayImage: PixabayImageModel,
-    showExtraInfos: Boolean = false,
+    imageModel: PixabayImageModel,
+    showExtraData: Boolean = false,
 ) {
 
     Box(
@@ -58,19 +58,19 @@ fun ImageUI(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconTextUI(icon = Icons.Outlined.AccountCircle, pixabayImage.userName)
+                IconTextUI(icon = Icons.Outlined.AccountCircle, imageModel.userName)
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TagsList(pixabayImage.tags)
+                TagsList(imageModel.tags)
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                ExtraInfosUI(showExtraInfos, pixabayImage)
+                ExtraInfosUI(showExtraData, imageModel)
             }
         }
     }
@@ -89,12 +89,12 @@ private fun TagsList(tags: List<String>) {
 
 @Composable
 private fun ExtraInfosUI(
-    showExtraInfos: Boolean,
-    pixabayImage: PixabayImageModel,
+    showExtra: Boolean,
+    imageModel: PixabayImageModel,
 ) {
-    if (showExtraInfos) {
-        IconTextUI(icon = Icons.Outlined.ThumbUp, pixabayImage.likes)
-        IconTextUI(icon = Icons.Outlined.Menu, pixabayImage.comments)
+    if (showExtra) {
+        IconTextUI(icon = Icons.Outlined.ThumbUp, imageModel.likes)
+        IconTextUI(icon = Icons.Outlined.Menu, imageModel.comments)
     }
 }
 

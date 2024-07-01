@@ -19,8 +19,8 @@ import com.google.accompanist.coil.rememberCoilPainter
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ImageDetailsScreen(pixabayImage: PixabayImageModel) {
-    var scale by remember { mutableStateOf(1f) }
-    val rotationState = remember { mutableStateOf(1f) }
+    var scale by remember { mutableFloatStateOf(1f) }
+    val rotationState = remember { mutableFloatStateOf(1f) }
 
     Box(
         modifier = Modifier
