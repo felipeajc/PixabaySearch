@@ -105,4 +105,5 @@ dependencies {
     // Dependências para testes de coroutines
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.mockk)
 }
