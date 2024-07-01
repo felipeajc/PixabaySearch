@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.dagger.hilt.android)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     kapt(libs.dagger.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.room.ktx)
@@ -97,4 +99,10 @@ dependencies {
     implementation(libs.accompanist.coil)
 
     kapt("androidx.room:room-compiler:2.6.1")
+
+    testImplementation(libs.mockito.core)
+
+    // Dependências para testes de coroutines
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
 }

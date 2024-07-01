@@ -1,17 +1,20 @@
 [versions]
 accompanistCoil = "0.13.0"
 agp = "8.3.2"
+coreTesting = "2.2.0"
 gradle = "8.3.2"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.0"
 espressoCore = "3.6.0"
+kotlinxCoroutinesTest = "1.7.3"
 lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 dagger-hilt = "2.49"
 hilt-navigation-compose = "1.2.0"
+mockitoCore = "3.12.4"
 roomKtx = "2.6.1"
 timber = "5.0.1"
 retrofit = "2.9.0"
@@ -21,6 +24,7 @@ okhttp = "5.0.0-alpha.2"
 [libraries]
 accompanist-coil = { module = "com.google.accompanist:accompanist-coil", version.ref = "accompanistCoil" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger-hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -41,6 +45,8 @@ dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-andro
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "moshi" }
