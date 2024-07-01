@@ -36,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -153,7 +154,7 @@ private fun SearchScreenContent(
     onImageClick: (Long) -> Unit = {},
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    var imageId by remember { mutableStateOf(-1L) }
+    var imageId by remember { mutableLongStateOf(-1L) }
 
     Box(
         modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
